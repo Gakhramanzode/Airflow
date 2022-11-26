@@ -1,8 +1,9 @@
 # Airflow
-Bash-скрипт по установке Airflow.
+:octocat: Bash-скрипт по установке Airflow.
 
 Поддерживаемые операционные системы:
-- Linux Ubuntu.
+- [x] Linux Ubuntu.
+- [ ] Linux CentOS
 
 Данный скрипт выполняет следующие действия:
 - обновляет пакеты;
