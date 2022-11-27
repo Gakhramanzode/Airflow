@@ -87,8 +87,8 @@ sleep 3
 clear
 sleep 1
 
-mkdir AirFlow
-cd AirFlow
+mkdir ~/Docker-compose-Airflow
+cd ~/Docker-compose-Airflow
 
 curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.4.3/docker-compose.yaml'
 
