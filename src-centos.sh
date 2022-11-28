@@ -17,8 +17,7 @@ sleep 3
 clear
 sleep 1
 
-sudo apt-get update
-sudo apt update
+sudo yum -y update
 clear
 
 echo "(1/3) Пакеты успешно обновлены!"
@@ -30,42 +29,31 @@ sleep 3
 clear
 sleep 1
 
-sudo apt-get install \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release
+sudo yum install -y yum-utils
+sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+
 clear
 sleep 1
 
-sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 clear
 sleep 1
 
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo systemctl start docker
 clear
 sleep 1
 
-sudo apt-get update
-clear
-sleep 1
+sudo yum update
+sudo yum install docker-compose-plugin
 
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 clear
 sleep 1
 
 sudo usermod -aG docker $USER
 clear
 sleep 1
-
-sudo apt-get update
-sudo apt-get install docker-compose-plugin
-
-#sudo yum update
-# sudo yum install docker-compose-plugin
 
 var=`docker --version`
 re="Docker version"
