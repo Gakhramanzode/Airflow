@@ -123,10 +123,12 @@ touch README.txt
 echo "Для того чтобы запустить AirFlow после перезагрузки, введите команду «docker compose up».‎" 
 echo "Для того чтобы запустить AirFlow после перезагрузки, введите команду «docker compose up».‎" > README.txt
 
+echo "Если вдруг выйдет ошибка «Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?», введите команду «sudo systemctl start docker»"
+echo "Если вдруг выйдет ошибка «Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?», введите команду «sudo systemctl start docker»" >> README.txt
 sleep 6
 
-echo "После запуска команды, будут подняты контейнеры, проверить можно командой «docker ps»."
-echo "После запуска команды, будут подняты контейнеры, проверить можно командой «docker ps»." >> README.txt
+echo "После запуска команды «docker compose up», будут подняты контейнеры, проверить можно командой «docker ps»."
+echo "После запуска команды «docker compose up», будут подняты контейнеры, проверить можно командой «docker ps»." >> README.txt
 sleep 4
 
 echo "Остановить контейнеры можно командой «docker compose stop»."
