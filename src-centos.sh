@@ -4,7 +4,7 @@ set -e
 
 clear
 
-echo "Обновим пакеты системы, установем Docker, Docker compose, запустим Airflow"
+echo "Обновим пакеты системы, установем Docker, Docker compose и Airflow"
 sleep 5
 clear
 
@@ -17,7 +17,7 @@ sleep 3
 clear
 sleep 1
 
-sudo yum -y update
+sudo yum -y update && sudo yum -y upgrade
 clear
 
 echo "(1/3) Пакеты успешно обновлены!"
@@ -37,7 +37,7 @@ sudo yum-config-manager \
 clear
 sleep 1
 
-sudo yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
 clear
 sleep 1
 
@@ -45,8 +45,7 @@ sudo systemctl start docker
 clear
 sleep 1
 
-sudo yum update
-sudo yum install docker-compose-plugin
+sudo yum -y update
 
 clear
 sleep 1
@@ -55,10 +54,10 @@ sudo usermod -aG docker $USER
 clear
 sleep 1
 
-var=`docker --version`
-re="Docker version"
+var=`sudo systemctl status docker | grep Active | grep running | wc -l`
 
-if [[ $var =~ $re ]]; then
+if [[ "$var" = 1 ]]
+then
         clear
         echo "(2/3) Docker успешно установлен!"
         sleep 3
@@ -67,7 +66,8 @@ else
         sleep 3
         clear
         echo "Возникла ошибка во время установки Docker"
-        exit 1
+        sudo systemctl status docker	#сразу вывести статус и на этом закончить скрипт
+	exit 1
 fi
 
 echo "Начинаю устанавливать Airflow..."
@@ -83,19 +83,11 @@ curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.4.3/docker-compose.y
 mkdir -p ./dags ./logs ./plugins
 echo -e "AIRFLOW_UID=$(id -u)" > .env
 
-sudo docker compose up airflow-init
+#я бы добавил
+sudo systemctl enable docker.service --now
+sudo systemctl enable containerd.service --now
 
-if [ $? -eq 0 ]; then
-	clear
-	echo "(3/3) Airflow успешно установлен!"
-	sleep 3
-	clear
-else
-        sleep 3
-        clear
-        echo "Возникла ошибка во время установки Airflow"
-        exit 1
-fi
+exit 0
 
 hostname=`hostname`
 sleep 1
@@ -112,20 +104,17 @@ echo "- установлен Airflow."
 sleep 3
 clear
 
-echo "Осталось перезагрузить $hostname. Это произойдет через 48 сек."
+echo "Осталось перезайти в консоль $hostname. Для этого необходимо выполнить в ручную команду "exit" и занаво залогиться в системе."
 sleep 3
 
-echo "Пока ознакомься со следующим."
+echo "Ознакомьтесь с инструкцией."
 sleep 3
 
 touch README.txt
 
-echo "Для того чтобы запустить AirFlow после перезагрузки, введите команду «docker compose up».‎" 
-echo "Для того чтобы запустить AirFlow после перезагрузки, введите команду «docker compose up».‎" > README.txt
+echo "Для того чтобы запустить AirFlow после перелогина в систему, войдите в директорию «~/Docker-compose-Airflow» введите команду «docker compose up airflow-init», далее «docker compose up»."
 
-echo "Если вдруг выйдет ошибка «Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?», введите команду «sudo systemctl start docker»"
-echo "Если вдруг выйдет ошибка «Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?», введите команду «sudo systemctl start docker»" >> README.txt
-sleep 6
+echo "Для того чтобы запустить AirFlow после перелогина в систему, войдите в директорию «~/Docker-compose-Airflow» введите команду «docker compose up airflow-init», далее «docker compose up»." > README.txt
 
 echo "После запуска команды «docker compose up», будут подняты контейнеры, проверить можно командой «docker ps»."
 echo "После запуска команды «docker compose up», будут подняты контейнеры, проверить можно командой «docker ps»." >> README.txt
@@ -148,16 +137,13 @@ echo "Пароль «airflow» и логин «airflow»." >> README.txt
 sleep 4
 
 pwd=`pwd`
-echo "Вся это информация будет в файле «README.txt». Файл будет находиться в $pwd"
+echo "Вся эта информация будет в файле «README.txt», который будет находиться в $pwd"
 sleep 6
 
 clear
 
-echo "Через 10 сек будет перезагрузка $hostname... "
-sleep 4
-
-echo "Начинаю обратный отсчет"
-sleep 1
+echo "Выходим из скрипта через..."
+sleep 3
 
 for i in {5..1}
 do
@@ -165,6 +151,6 @@ do
 	sleep 1
 done
 
-echo  "Начинаю перезагрзку..."
+clear
 
-sudo reboot now
+exit 0
