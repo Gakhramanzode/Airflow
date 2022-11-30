@@ -4,7 +4,7 @@ set -e
 
 clear
 
-echo "Обновим пакеты системы, установем Docker, Docker compose, запустим Airflow"
+echo "Обновим пакеты системы, установем Docker, Docker compose и Airflow"
 sleep 5
 clear
 
@@ -17,7 +17,7 @@ sleep 3
 clear
 sleep 1
 
-sudo yum -y update && sudo yum -y upgrade	#лишние пакеты нам не нужны
+sudo yum -y update && sudo yum -y upgrade
 clear
 
 echo "(1/3) Пакеты успешно обновлены!"
@@ -37,7 +37,7 @@ sudo yum-config-manager \
 clear
 sleep 1
 
-sudo yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y		#чтобы не согласовывать установку каждого пакета, заранее соглашаемся
+sudo yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
 clear
 sleep 1
 
@@ -45,8 +45,7 @@ sudo systemctl start docker
 clear
 sleep 1
 
-sudo yum -y update	#тут тоже соглашаемся
-#sudo yum install docker-compose-plugin - зачем повторно его ставить? он же выше заинсталлился
+sudo yum -y update
 
 clear
 sleep 1
@@ -55,10 +54,9 @@ sudo usermod -aG docker $USER
 clear
 sleep 1
 
-#я бы проверку делел не через вывод версии, а через статус, потому что версия не говорит о том, работает ли сервис или на нем висит ошибка
-var=`sudo systemctl status docker |grep Active |grep running | wc -l`
+var=`sudo systemctl status docker | grep Active | grep running | wc -l`
 
-if [[ "$var" = 1 ]]	#почитай отличие про [[]] и [] и почему я сделал так
+if [[ "$var" = 1 ]]
 then
         clear
         echo "(2/3) Docker успешно установлен!"
@@ -86,28 +84,10 @@ mkdir -p ./dags ./logs ./plugins
 echo -e "AIRFLOW_UID=$(id -u)" > .env
 
 #я бы добавил
-sudo systemctl enable docker.service	#Чтобы автоматически запускать Docker и Containerd при загрузке
-sudo systemctl enable containerd.service	#создается симлинк на 2 сервиса
+sudo systemctl enable docker.service --now
+sudo systemctl enable containerd.service --now
 
-#тут можешь перенправить все, что хочешь в README.txt и выходить из скрипта
 exit 0
-
-sudo docker compose up airflow-init	#Выполнять запуск контейнера из под рута - дурной тон и не позволителен в некоторых сервисах, но проблема в том, что что у тебя пользователь еще не добавлен в группу docker
-# по хорошему тут нужно закончить скрипт и выйти из консоли командой exit. Т.е. тебе ребут не нужно делать, незачем лишний раз машину перегружать. Просто перезайди в консоль
-# после перезахода выполнишь 2 команды руками (docker compose up airflow-init, docker compose up и проверишь состояние docker ps). В ямле, если не ошибаюсь уже прописан перезапуск остановленных контейнеров в случае ребута.
-# можешь их записать в README.txt, как ты делаешь ниже
-# почитай мои коменты ниже
-if [ $? -eq 0 ]; then
-	clear
-	echo "(3/3) Airflow успешно установлен!"
-	sleep 3
-	clear
-else
-        sleep 3
-        clear
-        echo "Возникла ошибка во время установки Airflow"
-        exit 1
-fi
 
 hostname=`hostname`
 sleep 1
@@ -124,21 +104,17 @@ echo "- установлен Airflow."
 sleep 3
 clear
 
-echo "Осталось перезагрузить $hostname. Это произойдет через 48 сек."
+echo "Осталось перезайти в консоль $hostname. Для этого необходимо выполнить в ручную команду "exit" и занаво залогиться в системе."
 sleep 3
 
-echo "Пока ознакомься со следующим."
+echo "Ознакомьтесь с инструкцией."
 sleep 3
 
 touch README.txt
 
-echo "Для того чтобы запустить AirFlow после перезагрузки, введите команду «docker compose up».‎" 
-echo "Для того чтобы запустить AirFlow после перезагрузки, введите команду «docker compose up».‎" > README.txt
+echo "Для того чтобы запустить AirFlow после перелогина в систему, войдите в директорию «~/Docker-compose-Airflow» введите команду «docker compose up airflow-init», далее «docker compose up»."
 
-#ошибки не будет, если ты заранее настроишь перезапуск сервиса. Я это сделал перед exit 0
-echo "Если вдруг выйдет ошибка «Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?», введите команду «sudo systemctl start docker»"
-echo "Если вдруг выйдет ошибка «Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?», введите команду «sudo systemctl start docker»" >> README.txt
-sleep 6
+echo "Для того чтобы запустить AirFlow после перелогина в систему, войдите в директорию «~/Docker-compose-Airflow» введите команду «docker compose up airflow-init», далее «docker compose up»." > README.txt
 
 echo "После запуска команды «docker compose up», будут подняты контейнеры, проверить можно командой «docker ps»."
 echo "После запуска команды «docker compose up», будут подняты контейнеры, проверить можно командой «docker ps»." >> README.txt
@@ -161,16 +137,13 @@ echo "Пароль «airflow» и логин «airflow»." >> README.txt
 sleep 4
 
 pwd=`pwd`
-echo "Вся это информация будет в файле «README.txt». Файл будет находиться в $pwd"
+echo "Вся эта информация будет в файле «README.txt», который будет находиться в $pwd"
 sleep 6
 
 clear
 
-echo "Через 10 сек будет перезагрузка $hostname... "
-sleep 4
-
-echo "Начинаю обратный отсчет"
-sleep 1
+echo "Выходим из скрипта через..."
+sleep 3
 
 for i in {5..1}
 do
@@ -178,6 +151,6 @@ do
 	sleep 1
 done
 
-echo  "Начинаю перезагрзку..."		#ощущение, что в этот момент должен поевиться Гагарин с фрозой: "Поехали!" )))
+clear
 
-sudo reboot now
+exit 0
