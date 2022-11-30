@@ -4,7 +4,7 @@ set -e
 
 clear
 
-echo "Обновим пакеты системы, установем Docker, Docker compose, запустим Airflow"
+echo "Обновим пакеты системы, установем Docker, Docker compose и Airflow"
 sleep 5
 clear
 
@@ -17,8 +17,8 @@ sleep 3
 clear
 sleep 1
 
-sudo apt-get update
-sudo apt update
+sudo apt-get -y update && sudo apt -y update
+sudo apt -y autoremove
 clear
 
 echo "(1/3) Пакеты успешно обновлены!"
@@ -30,7 +30,7 @@ sleep 3
 clear
 sleep 1
 
-sudo apt-get install \
+sudo apt-get -y install \
     ca-certificates \
     curl \
     gnupg \
@@ -49,11 +49,11 @@ echo \
 clear
 sleep 1
 
-sudo apt-get update
+sudo apt-get -y update
 clear
 sleep 1
 
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
 clear
 sleep 1
 
@@ -61,16 +61,11 @@ sudo usermod -aG docker $USER
 clear
 sleep 1
 
-sudo apt-get update
-sudo apt-get install docker-compose-plugin
+sudo apt-get -y update
 
-#sudo yum update
-# sudo yum install docker-compose-plugin
+var=`sudo service docker status | grep Active | grep running | wc -l`
 
-var=`docker --version`
-re="Docker version"
-
-if [[ $var =~ $re ]]; then
+if [[ "$var" = 1 ]]; then
         clear
         echo "(2/3) Docker успешно установлен!"
         sleep 3
@@ -79,13 +74,13 @@ else
         sleep 3
         clear
         echo "Возникла ошибка во время установки Docker"
+	sudo service docker status
         exit 1
 fi
 
 echo "Начинаю устанавливать Airflow..."
 sleep 3
 clear
-sleep 1
 
 mkdir ~/Docker-compose-Airflow
 cd ~/Docker-compose-Airflow
@@ -94,8 +89,6 @@ curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.4.3/docker-compose.y
 
 mkdir -p ./dags ./logs ./plugins
 echo -e "AIRFLOW_UID=$(id -u)" > .env
-
-sudo docker compose up airflow-init
 
 if [ $? -eq 0 ]; then
 	clear
@@ -110,7 +103,6 @@ else
 fi
 
 hostname=`hostname`
-sleep 1
 
 echo "Итого:"
 sleep 2
@@ -124,50 +116,46 @@ echo "- установлен Airflow."
 sleep 3
 clear
 
-echo "Осталось перезагрузить $hostname. Это произойдет через 48 сек."
-sleep 3
+printf "Осталось перезайти в консоль «$hostname».\nДля этого необходимо выполнить в ручную команду «exit» и занаво залогинеться в системе.\n\n"
+sleep 12
 
-echo "Пока ознакомься со следующим."
+echo "Ознакомьтесь с инструкцией."
 sleep 3
 
 touch README.txt
 
-echo "Для того чтобы запустить AirFlow после перезагрузки, введите команду «docker compose up».‎" 
-echo "Для того чтобы запустить AirFlow после перезагрузки, введите команду «docker compose up».‎" > README.txt
+printf "Для того чтобы запустить AirFlow после перелогина в систему:\n- войдите в директорию «~/Docker-compose-Airflow»;\n- введите команду «docker compose up airflow-init»;\n- далее «docker compose up».\n\n"
+printf "Для того чтобы запустить AirFlow после перелогина в систему:\n- войдите в директорию «~/Docker-compose-Airflow»;\n- введите команду «docker compose up airflow-init»;\n- далее «docker compose up».\n\n" > README.txt
+sleep 10
 
+printf "После запуска команды «docker compose up», будут подняты контейнеры, проверить можно командой «docker ps».\n"
+printf "После запуска команды «docker compose up», будут подняты контейнеры, проверить можно командой «docker ps».\n" >> README.txt
 sleep 6
 
-echo "После запуска команды, будут подняты контейнеры, проверить можно командой «docker ps»."
-echo "После запуска команды, будут подняты контейнеры, проверить можно командой «docker ps»." >> README.txt
-sleep 4
+printf "Остановить контейнеры можно командой «docker compose stop».\n"
+printf "Остановить контейнеры можно командой «docker compose stop».\n" >> README.txt
+sleep 6
 
-echo "Остановить контейнеры можно командой «docker compose stop»."
-echo "Остановить контейнеры можно командой «docker compose stop»." >> README.txt
-sleep 4
+printf "А остановить полностью и удалить контейнеры можно командой «docker compose down».\n\n"
+printf "А остановить полностью и удалить контейнеры можно командой «docker compose down».\n\n" >> README.txt
+sleep 6
 
-echo "А остановить полностью и удалить контейнеры можно командой «docker compose down»."
-echo "А остановить полностью и удалить контейнеры можно командой «docker compose down»." >> README.txt
-sleep 4
+printf "Airflow будет доступен по адресу: http://localhost:8080\n"
+printf "Airflow будет доступен по адресу: http://localhost:8080\n" >> README.txt
+sleep 6
 
-echo "Airflow будет доступен по адресу: http://localhost:8080"
-echo "Airflow будет доступен по адресу: http://localhost:8080" >> README.txt
-sleep 4
-
-echo "Пароль «airflow» и логин «airflow»."
-echo "Пароль «airflow» и логин «airflow»." >> README.txt
-sleep 4
+printf "Пароль «airflow» и логин «airflow».\n\n"
+printf "Пароль «airflow» и логин «airflow».\n\n" >> README.txt
+sleep 6
 
 pwd=`pwd`
-echo "Вся это информация будет в файле «README.txt». Файл будет находиться в $pwd"
-sleep 6
+echo "Вся эта информация будет в файле «README.txt», который будет находиться в «$pwd»."
+sleep 8
 
 clear
 
-echo "Через 10 сек будет перезагрузка $hostname... "
-sleep 4
-
-echo "Начинаю обратный отсчет"
-sleep 1
+echo "Выходим из скрипта через..."
+sleep 3
 
 for i in {5..1}
 do
@@ -175,6 +163,6 @@ do
 	sleep 1
 done
 
-echo  "Начинаю перезагрзку..."
+clear
 
-sudo reboot now
+exit 0
