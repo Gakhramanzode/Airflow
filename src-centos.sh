@@ -4,7 +4,7 @@ set -e
 
 clear
 
-echo "Обновим пакеты системы, установем Docker, Docker compose и Airflow"
+echo "Обновим пакеты системы, установим Docker, Docker compose и Airflow"
 sleep 5
 clear
 
