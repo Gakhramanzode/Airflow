@@ -3,7 +3,7 @@
 set -e
 
 #Переменный цвета
-RED='\033[0;31m' #Карсный
+RED='\033[0;31m' #Красный
 NC='\033[0m' #Нет цвета
 
 ID=`cat /etc/os-release | grep ^ID=`
@@ -23,7 +23,7 @@ elif [[ "$ID" = 'ID="centos"' ]]; then
         chmod +x src-centos.sh
         ./src-centos.sh
 else
+
         echo "${RED}Версия операционной системы не поддерживается.${NC}"
         exit 1
 fi
-
