@@ -70,8 +70,8 @@ if [ $? -eq 0 ]; then
 	echo -e "${GREEN}(3/3) Airflow успешно установлен!${NC}"
 	sleep 3
 else
-        sleep 3
-        echo -e "${REDВозникла ошибка во время установки Airflow${NC}"
+        echo -e "${RED}Возникла ошибка во время установки Airflow${NC}"
+	sleep 3
         exit 1
 fi
 
