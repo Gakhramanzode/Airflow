@@ -9,22 +9,22 @@ NC='\033[0m' #Нет цвета
 
 clear
 
-echo "${GREEN}Обновим пакеты системы, установим Docker, Docker compose и Airflow${NC}"
+echo -e "${GREEN}Обновим пакеты системы, установим Docker, Docker compose и Airflow${NC}"
 
 sleep 5
 
-echo "${GREEN}Приступим${NC}"
+echo -e "${GREEN}Приступим${NC}"
 sleep 2
 
-echo "${GREEN}Начинаю обновлять пакеты...${NC}"
+echo -e "${GREEN}Начинаю обновлять пакеты...${NC}"
 sleep 3
 
 sudo yum -y update && sudo yum -y upgrade
 
-echo "${GREEN}(1/3) Пакеты успешно обновлены!${NC}"
+echo -e "${GREEN}(1/3) Пакеты успешно обновлены!${NC}"
 sleep 3
 
-echo "${GREEN}Начинаю устанавливать Docker...${NC}"
+echo -e "${GREEN}Начинаю устанавливать Docker...${NC}"
 sleep 3
 
 sudo yum install -y yum-utils
@@ -43,16 +43,16 @@ sudo usermod -aG docker $USER
 var=`sudo systemctl status docker | grep Active | grep running | wc -l`
 
 if [[ "$var" = 1 ]]; then
-        echo "${GREEN}(2/3) Docker успешно установлен!${NC}"
+        echo -e "${GREEN}(2/3) Docker успешно установлен!${NC}"
         sleep 3
 else
         sleep 3
-        echo "${RED}Возникла ошибка во время установки Docker${NC}"
+        echo -e "${RED}Возникла ошибка во время установки Docker${NC}"
         sudo systemctl status docker
 	exit 1
 fi
 
-echo "${GREEN}Начинаю устанавливать Airflow...${NC}"
+echo -e "${GREEN}Начинаю устанавливать Airflow...${NC}"
 sleep 3
 
 mkdir ~/Docker-compose-Airflow
@@ -67,17 +67,17 @@ sudo systemctl enable docker.service --now
 sudo systemctl enable containerd.service --now
 
 if [ $? -eq 0 ]; then
-	echo "${GREEN}(3/3) Airflow успешно установлен!${NC}"
+	echo -e "${GREEN}(3/3) Airflow успешно установлен!${NC}"
 	sleep 3
 else
         sleep 3
-        echo "${REDВозникла ошибка во время установки Airflow${NC}"
+        echo -e "${REDВозникла ошибка во время установки Airflow${NC}"
         exit 1
 fi
 
 hostname=`hostname`
 
-echo "${GREEN}Итого:${NC}"
+echo -e "${GREEN}Итого:${NC}"
 sleep 2
 echo "- успешно обновлены пакеты;"
 sleep 2
@@ -88,40 +88,40 @@ sleep 2
 echo "- установлен Airflow."
 sleep 3
 
-printf "${GREEN}Осталось перезайти в консоль «$hostname».\nДля этого необходимо выполнить в ручную команду «exit» и занаво залогиниться в системе.${NC}\n\n"
+printf -e "${GREEN}Осталось перезайти в консоль «$hostname».\nДля этого необходимо выполнить в ручную команду «exit» и занаво залогиниться в системе.${NC}\n\n"
 sleep 12
 
-echo "${GREEN}Ознакомьтесь с инструкцией.${NC}"
+echo -e "${GREEN}Ознакомьтесь с инструкцией.${NC}"
 sleep 3
 
 touch README.txt
 
-printf "Для того чтобы запустить AirFlow после перелогина в систему:\n- войдите в директорию ${GREEN}~/Docker-compose-Airflow${NC};\n- введите команду ${GREEN}docker compose up airflow-init${NC};\n- далее ${GREEN}docker compose up${NC}.\n\n"
-printf "Для того чтобы запустить AirFlow после перелогина в систему:\n- войдите в директорию ${GREEN}~/Docker-compose-Airflow${NC};\n- введите команду ${GREEN}docker compose up airflow-init${NC};\n- далее ${GREEN}docker compose up${NC}.\n\n" > README.txt
+printf -e "Для того чтобы запустить AirFlow после перелогина в систему:\n- войдите в директорию ${GREEN}~/Docker-compose-Airflow${NC};\n- введите команду ${GREEN}docker compose up airflow-init${NC};\n- далее ${GREEN}docker compose up${NC}.\n\n"
+printf -e "Для того чтобы запустить AirFlow после перелогина в систему:\n- войдите в директорию ${GREEN}~/Docker-compose-Airflow${NC};\n- введите команду ${GREEN}docker compose up airflow-init${NC};\n- далее ${GREEN}docker compose up${NC}.\n\n" > README.txt
 sleep 10
 
-printf "После запуска команды ${GREEN}docker compose up${NC}, будут подняты контейнеры, проверить можно командой ${GREEN}docker ps${NC}.\n"
-printf "После запуска команды ${GREEN}docker compose up${NC}, будут подняты контейнеры, проверить можно командой ${GREEN}docker ps${NC}.\n" >> README.txt
+printf -e "После запуска команды ${GREEN}docker compose up${NC}, будут подняты контейнеры, проверить можно командой ${GREEN}docker ps${NC}.\n"
+printf -e "После запуска команды ${GREEN}docker compose up${NC}, будут подняты контейнеры, проверить можно командой ${GREEN}docker ps${NC}.\n" >> README.txt
 sleep 6
 
-printf "Остановить контейнеры можно командой ${GREEN}docker compose stop${NC}.\n"
-printf "Остановить контейнеры можно командой ${GREEN}docker compose stop${NC}.\n" >> README.txt
+printf -e "Остановить контейнеры можно командой ${GREEN}docker compose stop${NC}.\n"
+printf -e "Остановить контейнеры можно командой ${GREEN}docker compose stop${NC}.\n" >> README.txt
 sleep 6
 
-printf "А остановить полностью и удалить контейнеры можно командой ${GREEN}docker compose down${NC}.\n\n"
-printf "А остановить полностью и удалить контейнеры можно командой ${GREEN}docker compose down${NC}.\n\n" >> README.txt
+printf -e "А остановить полностью и удалить контейнеры можно командой ${GREEN}docker compose down${NC}.\n\n"
+printf -e "А остановить полностью и удалить контейнеры можно командой ${GREEN}docker compose down${NC}.\n\n" >> README.txt
 sleep 6
 
-printf "Airflow будет доступен по адресу: ${GREEN}http://localhost:8080${NC}\n"
-printf "Airflow будет доступен по адресу: ${GREEN}http://localhost:8080${NC}\n" >> README.txt
+printf -e "Airflow будет доступен по адресу: ${GREEN}http://localhost:8080${NC}\n"
+printf -e "Airflow будет доступен по адресу: ${GREEN}http://localhost:8080${NC}\n" >> README.txt
 sleep 6
 
-printf "Пароль ${GREEN}airflow${NC} и логин ${GREEN}airflow${NC}.\n\n"
-printf "Пароль ${GREEN}airflow${NC} и логин ${GREEN}airflow${NC}.\n\n" >> README.txt
+printf -e "Пароль ${GREEN}airflow${NC} и логин ${GREEN}airflow${NC}.\n\n"
+printf -e "Пароль ${GREEN}airflow${NC} и логин ${GREEN}airflow${NC}.\n\n" >> README.txt
 sleep 6
 
 pwd=`pwd`
-echo "Вся эта информация будет в файле ${GREEN}README.txt${NC}, который будет находиться в ${GREEN}$pwd${NC}."
+echo -e "Вся эта информация будет в файле ${GREEN}README.txt${NC}, который будет находиться в ${GREEN}$pwd${NC}."
 sleep 8
 
 echo -e "${GREEN}Выходим из скрипта через...${NC}"
