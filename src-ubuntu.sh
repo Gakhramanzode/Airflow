@@ -71,10 +71,10 @@ mkdir -p ./dags ./logs ./plugins
 echo -e "AIRFLOW_UID=$(id -u)" > .env
 
 if [ $? -eq 0 ]; then
-	echo "${GREEN}(3/3) Airflow успешно установлен!${NC}"
+	echo -e "${GREEN}(3/3) Airflow успешно установлен!${NC}"
 	sleep 3
 else
-        echo "${RED}Возникла ошибка во время установки Airflow${NC}"
+        echo -e "${RED}Возникла ошибка во время установки Airflow${NC}"
 	sleep 3
         exit 1
 fi
@@ -120,8 +120,8 @@ printf "Airflow будет доступен по адресу: ${GREEN}http://lo
 printf "Airflow будет доступен по адресу: ${GREEN}http://localhost:8080${NC}\n" >> README.txt
 sleep 6
 
-printf "Пароль «airflow» и логин ${GREEN}airflow${NC}.\n\n"
-printf "Пароль «airflow» и логин ${GREEN}airflow${NC}.\n\n" >> README.txt
+printf "Пароль ${GREEN}airflow${NC} и логин ${GREEN}airflow${NC}.\n\n"
+printf "Пароль ${GREEN}airflow${NC} и логин ${GREEN}airflow${NC}.\n\n" >> README.txt
 sleep 6
 
 pwd=`pwd`
