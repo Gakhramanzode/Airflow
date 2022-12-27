@@ -10,13 +10,11 @@ NC='\033[0m' #Нет цвета
 ID=`cat /etc/os-release | grep ^ID=`
 
 if [[ "$ID" = "ID=ubuntu" ]]; then
-	clear
 	echo -e "${GREEN}У вас Ubuntu${NC}"
 	sleep 3
         chmod +x src-ubuntu.sh
         ./src-ubuntu.sh
 elif [[ "$ID" = 'ID="centos"' ]]; then
-	clear
 	echo -e "${GREEN}У вас CentOS${NC}"
         sleep 3
         chmod +x src-centos.sh

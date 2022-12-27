@@ -7,8 +7,6 @@ GREEN='\033[0;32m' #Зеленый
 RED='\033[0;31m' #Красный
 NC='\033[0m' #Нет цвета
 
-clear
-
 echo -e "${GREEN}Обновим пакеты системы, установим Docker, Docker compose и Airflow${NC}"
 
 sleep 5
@@ -46,8 +44,8 @@ if [[ "$var" = 1 ]]; then
         echo -e "${GREEN}(2/3) Docker успешно установлен!${NC}"
         sleep 3
 else
-        sleep 3
         echo -e "${RED}Возникла ошибка во время установки Docker${NC}"
+	sleep 3
         sudo systemctl status docker
 	exit 1
 fi
