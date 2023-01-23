@@ -17,7 +17,7 @@ sleep 2
 echo -e "${GREEN}Начинаю обновлять пакеты...${NC}"
 sleep 3
 
-sudo apt-get -y update && sudo apt -y update
+sudo apt-get update && apt-get upgrade -y
 sudo apt -y autoremove
 
 echo -e "${GREEN}(1/3) Пакеты успешно обновлены!${NC}"
